@@ -28,7 +28,7 @@ function Login() {
   }
   return (
     <>
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="mt-4 grow flex items-center justify-around">
         <div className="mb-64">
           <h1>Login Page</h1>

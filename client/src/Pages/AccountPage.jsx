@@ -1,10 +1,24 @@
 import React from "react";
 import { UserContext } from "../UserContext";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 function AccountPage() {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const [redirect, setRedirect] = useState("");
+
+  function logout(e) {
+    e.preventDefault();
+    axios.post("/logout");
+    setUser(null);
+    setRedirect("/");
+  }
+
+  if (redirect) {
+    return <Navigate to={redirect} />;
+  }
 
   return (
     <nav className="flex flex-col w-full justify-center mt-8 gap-2 mb-8">
@@ -31,7 +45,9 @@ function AccountPage() {
         </div>
 
         <br />
-        <button className="primary max-w-sm mt-2 ">Log out</button>
+        <button onClick={logout} className="primary max-w-sm mt-2 ">
+          Log out
+        </button>
       </div>
     </nav>
   );
