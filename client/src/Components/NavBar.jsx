@@ -7,7 +7,7 @@ function NavBar() {
   const { user } = useContext(UserContext);
   console.log(user);
   return (
-    <div className="flex justify-between items-center m-auto max-w-6xl py-9">
+    <div className="flex justify-between items-center pt-10">
       <Link className="flex items-center gap-1" to="/">
         <svg
           xmlns="http://www.w3.org/2000/svg"

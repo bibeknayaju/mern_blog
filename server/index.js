@@ -5,6 +5,7 @@ const bcryptjs = require("bcrypt");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const User = require("./models/User");
+const Blog = require("./models/Blog");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs/dist/bcrypt");
 const app = express();
@@ -80,6 +81,24 @@ app.get("/profile", (req, res) => {
     });
   } else {
     res.json(null);
+  }
+});
+
+// FOR SAVE THE BLOG
+app.post("/blogs", (req, res) => {
+  const { token } = req.cookies;
+  const { title, description, photos } = req.body;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const blogDoc = await Blog.create({
+        owner: userData.id,
+        title,
+        description,
+        photos,
+      });
+      res.json(blogDoc);
+    });
   }
 });
 

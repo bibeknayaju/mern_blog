@@ -8,6 +8,7 @@ import axios from "axios";
 import { UserContextProvider } from "./UserContext";
 import NavBar from "./Components/NavBar";
 import AccountPage from "./Pages/AccountPage";
+import Layout from "./Components/Layout";
 
 axios.defaults.baseURL = "http://localhost:4000";
 axios.defaults.withCredentials = true;
@@ -17,7 +18,8 @@ function App() {
     <UserContextProvider>
       <NavBar />
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route path="/" element={<Layout />} />
+        <Route index element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/account" element={<AccountPage />} />

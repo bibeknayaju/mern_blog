@@ -45,7 +45,9 @@ function AccountPage() {
         </div>
 
         <br />
-        <button onClick={logout} className="primary max-w-sm mt-2 ">
+        <button
+          onClick={logout}
+          className="bg-primary p-2 w-full text-white rounded-2xl primary">
           Log out
         </button>
       </div>
