@@ -6,7 +6,7 @@ import axios from "axios";
 import { useState } from "react";
 
 function AccountPage() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, ready } = useContext(UserContext);
   const [redirect, setRedirect] = useState("");
 
   function logout(e) {
@@ -16,13 +16,17 @@ function AccountPage() {
     setRedirect("/");
   }
 
+  if (!ready) {
+    return <div>Loading...</div>;
+  }
+
   if (redirect) {
     return <Navigate to={redirect} />;
   }
 
   return (
-    <nav className="flex flex-col w-full justify-center mt-8 gap-2 mb-8">
-      <div className=" gap-1 py-2 px-6 rounded-full">
+    <nav className="text-white flex flex-col w-full justify-center mt-8 gap-2 mb-8">
+      <div className=" gap-1 py-2 px-6 rounded-3xl">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -37,6 +41,14 @@ function AccountPage() {
           />
         </svg>
         My Account
+      </div>
+
+      <div className="border rounded-full">
+        <img
+          src={"http://localhost:4000/userphotos/" + user?.photos?.[0]}
+          alt={user?.name}
+          className="h-36 rounded-full"
+        />
       </div>
 
       <div className="max-w-lg m-auto text-center">

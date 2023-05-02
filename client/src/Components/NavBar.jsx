@@ -5,9 +5,8 @@ import { UserContext } from "../UserContext";
 
 function NavBar() {
   const { user } = useContext(UserContext);
-  console.log(user);
   return (
-    <div className="flex justify-between items-center pt-10">
+    <div className="text-white flex justify-between items-center pt-10">
       <Link className="flex items-center gap-1" to="/">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,41 +22,61 @@ function NavBar() {
           />
         </svg>
 
-        <span className="font-bold text-xl">My Blog</span>
+        <span className="font-bold text-white text-xl">My Blog</span>
       </Link>
       <div className="flex gap-2 items-center">
-        {!!user && <Link to={"/create-blog"}>Create Post</Link>}
+        {!!user && <Link to={"/account/blog/new"}>Create Post</Link>}
 
         <Link
           to={user ? "/account" : "/login"}
           className="flex items-center border border-gray-300 gap-2 rounded-full px-4 py-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-            />
-          </svg>
+          {user ? (
+            <>
+              {" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+              <div className="text-white bg-gray-500 rounded-full border-gray-300 border overflow-hidden">
+                <div className="border rounded-full">
+                  <img
+                    src={
+                      "http://localhost:4000/userphotos/" + user?.photos?.[0]
+                    }
+                    alt={user?.name}
+                    className="h-10 rounded-full"
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex gap-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                />
+              </svg>
 
-          <div className="text-white bg-gray-500 rounded-full border-gray-300 border overflow-hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6 relative top-1">
-              <path
-                fillRule="evenodd"
-                d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+              <h4> Login</h4>
+            </div>
+          )}
 
           {!!user && <div>{user.name}</div>}
         </Link>

@@ -8,6 +8,7 @@ import axios from "axios";
 import { UserContextProvider } from "./UserContext";
 import NavBar from "./Components/NavBar";
 import AccountPage from "./Pages/AccountPage";
+import BlogPage from "./Pages/BlogPage";
 import Layout from "./Components/Layout";
 
 axios.defaults.baseURL = "http://localhost:4000";
@@ -23,7 +24,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/account" element={<AccountPage />} />
-        <Route path="/create-blog" element={<CreateBlog />} />
+        <Route path="/account/blog/new" element={<CreateBlog />} />
+        <Route path="/blog/:id/" element={<BlogPage />} />
       </Routes>
     </UserContextProvider>
   );

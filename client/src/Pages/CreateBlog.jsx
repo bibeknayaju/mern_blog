@@ -1,6 +1,71 @@
 import React from "react";
+import PhotoUploader from "../Components/PhotoUploader";
+import { useParams, Navigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 function CreateBlog() {
+  const [addedPhotos, setAddedPhotos] = useState([]);
+  console.log("ADDED PHOTOS FROM PHOTO UPLOADER", addedPhotos);
+  const { id } = useParams();
+  const [redirect, setRedirect] = useState(false);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [summary, setSummary] = useState("");
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+  ];
+
+  // for creating the blog in the database
+  async function saveBlogs(e) {
+    e.preventDefault();
+    const blogData = {
+      title,
+      description,
+      addedPhotos,
+      summary,
+    };
+    if (id) {
+      await axios.put("/blogs", { id, ...blogData });
+    } else {
+      await axios.post("/blogs", blogData);
+      setRedirect(true);
+    }
+  }
+
+  if (redirect) {
+    return <Navigate to={"/"} />;
+  }
+
   function inputHeader(text) {
     return <h2 className="text-2xl mt-4">{text}</h2>;
   }
@@ -19,31 +84,45 @@ function CreateBlog() {
   }
   return (
     <div className="">
-      <form onSubmit={true}>
+      <form onSubmit={saveBlogs}>
         {preInput("Title", "Title of the Blog")}
-        <input type="text" placeholder="Title of the Blog" />
+        <input
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          placeholder="Title of the Blog"
+        />
+
+        {preInput("Summary", "Summary of the Blog")}
+        <input
+          required
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+          type="text"
+          placeholder="Summary of the Blog"
+        />
 
         {preInput("Description", "Description of the Blog")}
-        <textarea />
-        <div className="mt-3 gap-2 grid gird-col-6 md:grid-cols-6 lg:grid-cols-6">
-          <label className="h-32 cursor-pointer flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-2 text-2xl text-gray-600">
-            <input type="file" multiple className="hidden" />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-8 h-8">
-              <path
-                fillRule="evenodd"
-                d="M10.5 3.75a6 6 0 00-5.98 6.496A5.25 5.25 0 006.75 20.25H18a4.5 4.5 0 002.206-8.423 3.75 3.75 0 00-4.133-4.303A6.001 6.001 0 0010.5 3.75zm2.03 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v4.94a.75.75 0 001.5 0v-4.94l1.72 1.72a.75.75 0 101.06-1.06l-3-3z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Upload
-          </label>
-        </div>
+        {/* <textarea
+          required
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        /> */}
 
-        <button className="bg-primary p-2 w-full text-white rounded-2xl primary">
+        <ReactQuill
+          className="h-60"
+          required
+          value={description}
+          modules={modules}
+          formats={formats}
+          onChange={(newValue) => setDescription(newValue)}
+          theme="snow"
+        />
+
+        <PhotoUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
+
+        <button className="bg-primary p-2 w-full text-white rounded-2xl mt-9 primary">
           Save
         </button>
       </form>
