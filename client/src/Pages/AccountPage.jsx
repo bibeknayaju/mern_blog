@@ -1,9 +1,10 @@
 import React from "react";
 import { UserContext } from "../UserContext";
 import { useContext } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 
 function AccountPage() {
   const { user, setUser, ready } = useContext(UserContext);
@@ -25,8 +26,12 @@ function AccountPage() {
   }
 
   return (
-    <nav className="text-white flex flex-col w-full justify-center mt-8 gap-2 mb-8">
-      <div className=" gap-1 py-2 px-6 rounded-3xl">
+    <nav className="text-white flex flex-col grow justify-center my-8 gap-2">
+      <Helmet>
+        <title>{user.name} | Account Page</title>
+        <meta name="description" content="My Page Description" />
+      </Helmet>
+      <div className=" gap-1 py-2 px-6 items-center flex flex-col rounded-3xl m-auto text-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -43,7 +48,7 @@ function AccountPage() {
         My Account
       </div>
 
-      <div className="border rounded-full">
+      <div className="border rounded-full items-center m-auto">
         <img
           src={"http://localhost:4000/userphotos/" + user?.photos?.[0]}
           alt={user?.name}

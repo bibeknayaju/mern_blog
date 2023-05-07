@@ -23,12 +23,15 @@ button {
 }
 
 button.primary {
-  background-color: #f5385d;
+  background-color: #2563ea;
   /* @apply bg-primary p-2 w-full text-white rounded-2xl; */
 }
 
 * {
-  margin: auto;
-  max-width: 1200px;
+  /* margin: auto;
+  max-width: 1200px; */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   background-color: #11172b;
 }

@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import "./App.css";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
 import RegisterPage from "./Pages/RegisterPage";
@@ -10,6 +9,8 @@ import NavBar from "./Components/NavBar";
 import AccountPage from "./Pages/AccountPage";
 import BlogPage from "./Pages/BlogPage";
 import Layout from "./Components/Layout";
+import Footer from "./Components/Footer";
+import EditBlog from "./Pages/EditBlog";
 
 axios.defaults.baseURL = "http://localhost:4000";
 axios.defaults.withCredentials = true;
@@ -26,7 +27,9 @@ function App() {
         <Route path="/account" element={<AccountPage />} />
         <Route path="/account/blog/new" element={<CreateBlog />} />
         <Route path="/blog/:id/" element={<BlogPage />} />
+        <Route path="/edit/:id/" element={<EditBlog />} />
       </Routes>
+      <Footer />
     </UserContextProvider>
   );
 }

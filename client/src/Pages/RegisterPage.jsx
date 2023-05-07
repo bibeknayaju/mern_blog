@@ -1,8 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import NavBar from "../Components/NavBar";
 import axios from "axios";
+import { Helmet } from "react-helmet";
 
 function RegisterPage() {
   const [name, setName] = useState("");
@@ -64,16 +64,38 @@ function RegisterPage() {
 
   return (
     <>
-      <div className="mt-4 text-white grow flex items-center justify-around">
-        <div className="mb-64">
-          <h1 className="text-4xl text-center mb-4">Register</h1>
+      <div className="mt-4 text-white grow flex max-w-7xl m-auto items-center justify-around">
+        <Helmet>
+          <title>{"Register Page"}</title>
+          <meta name="description" content="My Page Description" />
+        </Helmet>
+        <div className="mb-36">
+          <h1 className=" text-center font-Montserrat mb-5 text-3xl">
+            Register
+          </h1>
           <form className="max-w-md mx-auto" onSubmit={registerUser}>
-            <input
-              className="w-full border rounded-lg py-3 px-4 mb-2"
-              multiple
-              onChange={uploadPhoto}
-              type="file"
-            />
+            <label class="relative cursor-pointer mb-2 rounded-md font-medium text-gray-100 hover:text-indigo-500 flex items-center gap-1 justify-center border bg-transparent p-2 text-">
+              <span>Select a file</span>
+              <input
+                className="w-full hidden border rounded-lg py-3 px-4 mb-2"
+                multiple
+                onChange={uploadPhoto}
+                type="file"
+              />
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-8 h-8">
+                <path
+                  fillRule="evenodd"
+                  d="M10.5 3.75a6 6 0 00-5.98 6.496A5.25 5.25 0 006.75 20.25H18a4.5 4.5 0 002.206-8.423 3.75 3.75 0 00-4.133-4.303A6.001 6.001 0 0010.5 3.75zm2.03 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v4.94a.75.75 0 001.5 0v-4.94l1.72 1.72a.75.75 0 101.06-1.06l-3-3z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </label>
+
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -103,9 +125,9 @@ function RegisterPage() {
               Register
             </button>
 
-            <div className="text-center py-2 text-gray-500">
+            <div className="text-center py-2 text-gray-100">
               Already have an account?{" "}
-              <Link to="/login" className="underline text-black">
+              <Link to="/login" className="underline text-gray-300">
                 Login
               </Link>
             </div>

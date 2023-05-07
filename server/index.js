@@ -13,6 +13,13 @@ const app = express();
 const multer = require("multer");
 const fs = require("fs");
 const bodyParser = require("body-parser");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+});
+
+const photoMiddleware = multer({ storage: storage });
 
 app.use(express.json());
 app.use(cookieParser());
@@ -119,7 +126,6 @@ app.post(
 );
 
 // FOR UPLOADING THE IMAGE OF BLOG
-const photoMiddleware = multer({ dest: "uploads" });
 app.post("/upload", photoMiddleware.array("photos", 100), (req, res) => {
   const uploadFiles = [];
   for (let i = 0; i < req.files.length; i++) {
@@ -175,7 +181,9 @@ app.post("/blog/:id/comment", (req, res) => {
 
 app.get("/blog/:id/comment", async (req, res) => {
   const { id } = req.params;
-  const comments = await Comment.find({ blog: id }).sort({ createdAt: -1 });
+  const comments = await Comment.find({ blog: id })
+    .populate("author")
+    .sort({ createdAt: -1 });
 
   if (comments) {
     res.json(comments);
@@ -198,12 +206,136 @@ app.get("/blogs", async (req, res) => {
 
 app.get("/blog/:id", async (req, res) => {
   const { id } = req.params;
-  const blogDoc = await Blog.findById(id).populate("owner comment", ["name"]);
+  const blogDoc = await Blog.findById(id).populate("owner comment", [
+    "name",
+    "photos",
+  ]);
 
   if (blogDoc) {
     res.json(blogDoc);
   } else {
     res.status(404).json({ error: "Blog not found" });
+  }
+});
+
+// for updating the blog
+// app.put("/blog/:id", photoMiddleware.array("photos", 100), async (req, res) => {
+//   const newPaths = [];
+//   if (req.files && req.files.length > 0) {
+//     for (let i = 0; i < req.files.length; i++) {
+//       const { path, originalname } = req.files[i];
+//       const newOne = path.split("/");
+//       const parts = originalname.split(".");
+//       if (parts && parts.length > 1) {
+//         const ext = parts[parts?.length - 1];
+//         const newPath = newOne.slice(1).join("/") + "." + ext;
+//         fs.renameSync(path, newPath);
+//         newPaths.push(newPath.replace("uploads/", ""));
+//       }
+//     }
+//     // Use the newPaths array as needed
+//   }
+
+//   const { token } = req.cookies;
+//   const { id } = req.params;
+//   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+//     if (err) throw err;
+//     const { title, summary, description } = req.body;
+//     const blogDoc = await Blog.findById(id);
+//     const isOwner =
+//       JSON.stringify(blogDoc?.owner) === JSON.stringify(userData?.id);
+//     if (!isOwner) {
+//       return res.status(400).json("you are not the author");
+//     }
+
+//     const response = await blogDoc.updateOne({
+//       title,
+//       summary,
+//       description,
+//       photos: newPath ? newPath : blogDoc?.photos,
+//     });
+//     res.json(response);
+//   });
+// });
+
+app.put(
+  "/blog/:id",
+  photoMiddleware.array("updatephotos", 100),
+  async (req, res) => {
+    let newPath;
+    const newPaths = [];
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const { path, originalname } = req.files[i];
+        const newOne = path.split("/");
+        const parts = originalname.split(".");
+        if (parts && parts.length > 1) {
+          const ext = parts[parts?.length - 1];
+          newPath = newOne.join("/") + "." + ext;
+          fs.renameSync(path, newPath);
+          newPaths.push(newPath.replace("/", ""));
+        }
+      }
+    }
+
+    const { token } = req.cookies;
+    const { id } = req.params;
+
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const { title, summary, description } = req.body;
+      const blogDoc = await Blog.findById(id);
+      const isOwner =
+        JSON.stringify(blogDoc?.owner) === JSON.stringify(userData?.id);
+      if (!isOwner) {
+        return res.status(400).json("you are not the author");
+      }
+
+      // const photos = newPath ? newPath : blogDoc?.photos;
+      const splitPhoto = newPath.split("/");
+      const photos = splitPhoto[1];
+
+      const response = await blogDoc.updateOne({
+        title,
+        summary,
+        description,
+        photos: photos ? photos : blogDoc?.photos,
+      });
+
+      res.json(response);
+    });
+  }
+);
+// to delete the blog
+app.delete("/blog/:id", async (req, res) => {
+  const { id } = req.params;
+  const { token } = req.cookies;
+
+  try {
+    const userData = jwt.verify(token, jwtSecret);
+    const blog = await Blog.findById(id);
+
+    if (blog) {
+      if (blog.owner.toString() === userData.id) {
+        // Delete all comments related to the deleted blog post
+        await Comment.deleteMany({ blog: blog._id });
+
+        // Delete the blog post
+        await Blog.findOneAndDelete({ owner: userData.id, _id: id });
+
+        return res.json(true);
+      } else {
+        return res
+          .status(401)
+          .json({ error: "You are not authorized to delete this blog" });
+      }
+    } else {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ error: "You are not authorized to perform this action" });
   }
 });
 

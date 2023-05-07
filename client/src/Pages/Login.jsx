@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../UserContext";
+import { Helmet } from "react-helmet";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -44,6 +45,10 @@ function Login() {
   return (
     <>
       <div className="text-white mt-4 grow flex items-center justify-around">
+        <Helmet>
+          <title>{"Login Page"}</title>
+          <meta name="description" content="My Page Description" />
+        </Helmet>
         <div className="mb-64">
           <h1 className="text-center font-Montserrat mb-5 text-3xl">Login</h1>
 

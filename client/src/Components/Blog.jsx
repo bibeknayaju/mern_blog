@@ -3,27 +3,29 @@ import { Link } from "react-router-dom";
 
 function Blog({ blogs }) {
   return (
-    <div className=" py-4 text-white px-8 flex flex-col min-h-screen">
+    <div className=" pb-4 pt-2 bg-allbody text-white flex flex-col min-h-screen">
       <div className=" mt-8 ">
         {blogs.length > 0 &&
           blogs.map((blog) => (
-            <Link
-              className="flex border px-4 py-4 mb-5 rounded-xl items-center gap-10"
-              to={"/blog/" + blog._id}>
+            <div className="flex border cursor-auto pl-4 py-4 mb-5 rounded-xl items-center gap-10">
               <div key={blog.title} className="  rounded-2xl flex">
-                {blog.photos?.[0] && (
-                  <img
-                    className=" rounded-2xl aspect-square object-contain h-52"
-                    src={"http://localhost:4000/uploads/" + blog.photos?.[0]}
-                    alt={blog.title}
-                  />
-                )}
+                <Link to={"/blog/" + blog._id}>
+                  {blog.photos?.[0] && (
+                    <img
+                      className=" rounded-2xl aspect-square object-contain h-52"
+                      src={"http://localhost:4000/uploads/" + blog.photos?.[0]}
+                      alt={blog.title}
+                    />
+                  )}
+                </Link>
               </div>
-              <div className="flex flex-col w-[40rem]">
-                <h2 className="font-bold text-xl">{blog.title}</h2>
+              <div className="flex flex-col w-[43rem]">
+                <Link to={"/blog/" + blog._id}>
+                  <h2 className="font-bold text-xl">{blog.title}</h2>
+                </Link>
                 <h6
                   className="text-sm mr-3 
-              text-gray-500 truncate">
+                  text-gray-500 truncate">
                   {blog.summary}
                 </h6>
 
@@ -62,7 +64,7 @@ function Blog({ blogs }) {
                   </h3>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
       </div>
     </div>

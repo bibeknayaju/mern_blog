@@ -3,47 +3,16 @@ import PhotoUploader from "../Components/PhotoUploader";
 import { useParams, Navigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { Helmet } from "react-helmet";
+import Editor from "../Components/Editor";
 
 function CreateBlog() {
   const [addedPhotos, setAddedPhotos] = useState([]);
-  console.log("ADDED PHOTOS FROM PHOTO UPLOADER", addedPhotos);
-  const { id } = useParams();
   const [redirect, setRedirect] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [summary, setSummary] = useState("");
-
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
-      ["link", "image"],
-      ["clean"],
-    ],
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-  ];
 
   // for creating the blog in the database
   async function saveBlogs(e) {
@@ -54,12 +23,9 @@ function CreateBlog() {
       addedPhotos,
       summary,
     };
-    if (id) {
-      await axios.put("/blogs", { id, ...blogData });
-    } else {
-      await axios.post("/blogs", blogData);
-      setRedirect(true);
-    }
+
+    await axios.post("/blogs", blogData);
+    setRedirect(true);
   }
 
   if (redirect) {
@@ -83,7 +49,11 @@ function CreateBlog() {
     );
   }
   return (
-    <div className="">
+    <div className="text-white max-w-6xl m-auto">
+      <Helmet>
+        <title>{"Create Blog"}</title>
+        <meta name="description" content="My Page Description" />
+      </Helmet>
       <form onSubmit={saveBlogs}>
         {preInput("Title", "Title of the Blog")}
         <input
@@ -110,15 +80,7 @@ function CreateBlog() {
           onChange={(e) => setDescription(e.target.value)}
         /> */}
 
-        <ReactQuill
-          className="h-60"
-          required
-          value={description}
-          modules={modules}
-          formats={formats}
-          onChange={(newValue) => setDescription(newValue)}
-          theme="snow"
-        />
+        <Editor value={description} onChange={setDescription} />
 
         <PhotoUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
 
