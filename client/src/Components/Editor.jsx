@@ -13,6 +13,8 @@ export default function Editor({ value, onChange }) {
         { indent: "+1" },
       ],
       ["link", "image"],
+      [{ "code-block": "code" }], // added code-block button to the toolbar
+
       ["clean"],
     ],
   };
@@ -29,6 +31,7 @@ export default function Editor({ value, onChange }) {
     "indent",
     "link",
     "image",
+    "code-block", // added "code-block" format
   ];
 
   return (

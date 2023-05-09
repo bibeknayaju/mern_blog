@@ -4,6 +4,7 @@ import axios from "axios";
 import CommentForm from "../Components/CommentForm";
 import { UserContext } from "../UserContext";
 import { Helmet } from "react-helmet";
+import ScrollToTopOnMount from "../Components/ScrollToTopOnMount";
 
 function BlogPage() {
   const { user } = useContext(UserContext);
@@ -53,17 +54,19 @@ function BlogPage() {
   }
 
   return (
-    <div className="max-w-7xl mb-5 m-auto mt-8 flex flex-col text-white">
+    <div className="max-w-7xl mb-5 px-5 md:px-0 lg:px-0 m-auto mt-8 flex flex-col text-white">
       <Helmet>
         <title>{blog.title}</title>
         <meta name="description" content="My Page Description" />
       </Helmet>
 
+      <ScrollToTopOnMount />
+
       <div className="max-w-4xl m-auto">
         <img
           src={"http://localhost:4000/uploads/" + blog.photos?.[0]}
           alt={blog.title}
-          className="h-[30rem] rounded-lg mb-8"
+          className="h-[20rem] object-contain md:object-fill lg:object-fill md:px-2 md:h-[30rem] rounded-lg mb-8"
         />
       </div>
       <div className="text-center max-w-4xl mb-2 m-auto">
@@ -147,7 +150,7 @@ function BlogPage() {
 
       <div className="max-w-3xl m-auto">
         <h4
-          className="font-Montserrat text-xl leading-9 font-normal"
+          className="font-Montserrat w-[fit] text-xl leading-9 font-normal"
           dangerouslySetInnerHTML={{ __html: blog.description }}
         />
       </div>

@@ -6,7 +6,7 @@ import { UserContext } from "../UserContext";
 function NavBar() {
   const { user } = useContext(UserContext);
   return (
-    <div className="sticky top-0 border-b pb-4 border-gray-300">
+    <div className="sticky px-5 md:p-0 lg:p-0 top-0 border-b pb-4 border-gray-300 ">
       <div className="text-white max-w-6xl m-auto flex justify-between items-center pt-10">
         <Link className="flex items-center gap-1" to="/">
           <svg
@@ -42,7 +42,7 @@ function NavBar() {
                   d="M12 4.5v15m7.5-7.5h-15"
                 />
               </svg>
-              Create Post
+              <h3 className="hidden md:block">Create Post</h3>
             </Link>
           )}
 

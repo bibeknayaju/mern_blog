@@ -77,6 +77,7 @@ app.post("/login", async (req, res) => {
           name: userDoc.name,
         },
         jwtSecret,
+        { expiresIn: "1h" }, // set session expiration of 1 hour
         {},
         (err, token) => {
           if (err) throw err;
@@ -200,7 +201,9 @@ app.post("/logout", (req, res) => {
 // for retrieve all the blogs of all users
 app.get("/blogs", async (req, res) => {
   res.json(
-    await Blog.find().populate("owner", ["name"]).sort({ createdAt: -1 })
+    await Blog.find()
+      .populate("owner", ["name", "photos"])
+      .sort({ createdAt: -1 })
   );
 });
 
@@ -219,45 +222,6 @@ app.get("/blog/:id", async (req, res) => {
 });
 
 // for updating the blog
-// app.put("/blog/:id", photoMiddleware.array("photos", 100), async (req, res) => {
-//   const newPaths = [];
-//   if (req.files && req.files.length > 0) {
-//     for (let i = 0; i < req.files.length; i++) {
-//       const { path, originalname } = req.files[i];
-//       const newOne = path.split("/");
-//       const parts = originalname.split(".");
-//       if (parts && parts.length > 1) {
-//         const ext = parts[parts?.length - 1];
-//         const newPath = newOne.slice(1).join("/") + "." + ext;
-//         fs.renameSync(path, newPath);
-//         newPaths.push(newPath.replace("uploads/", ""));
-//       }
-//     }
-//     // Use the newPaths array as needed
-//   }
-
-//   const { token } = req.cookies;
-//   const { id } = req.params;
-//   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-//     if (err) throw err;
-//     const { title, summary, description } = req.body;
-//     const blogDoc = await Blog.findById(id);
-//     const isOwner =
-//       JSON.stringify(blogDoc?.owner) === JSON.stringify(userData?.id);
-//     if (!isOwner) {
-//       return res.status(400).json("you are not the author");
-//     }
-
-//     const response = await blogDoc.updateOne({
-//       title,
-//       summary,
-//       description,
-//       photos: newPath ? newPath : blogDoc?.photos,
-//     });
-//     res.json(response);
-//   });
-// });
-
 app.put(
   "/blog/:id",
   photoMiddleware.array("updatephotos", 100),
@@ -267,7 +231,7 @@ app.put(
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const { path, originalname } = req.files[i];
-        const newOne = path.split("/");
+        const newOne = path?.split("/");
         const parts = originalname.split(".");
         if (parts && parts.length > 1) {
           const ext = parts[parts?.length - 1];
@@ -292,8 +256,14 @@ app.put(
       }
 
       // const photos = newPath ? newPath : blogDoc?.photos;
-      const splitPhoto = newPath.split("/");
-      const photos = splitPhoto[1];
+      // const splitPhoto = newPath?.split("/");
+      // const photos = splitPhoto[1];
+      let photos = blogDoc?.photos;
+
+      if (newPath) {
+        const splitPhoto = newPath.split("/");
+        photos = splitPhoto[1];
+      }
 
       const response = await blogDoc.updateOne({
         title,

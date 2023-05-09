@@ -24,7 +24,7 @@ function CommentForm({ onCommentCreated }) {
   };
 
   return (
-    <div className=" bottom-3  max-w-4xl m-auto border px-3 py-2 rounded-2xl border-transparent mt-6 flex">
+    <div className=" bottom-3 max-w-4xl m-auto border px-3 md:px-2 py-2 rounded-2xl border-transparent mt-6 flex">
       <form onSubmit={saveComment}>
         {user ? (
           <div className="flex gap-3">
@@ -43,7 +43,7 @@ function CommentForm({ onCommentCreated }) {
                   placeholder="Enter your comment here..."
                   value={comment}
                   onChange={(event) => setComment(event.target.value)}
-                  className="w-[30rem] px-2 py-3 grow outline-none border-gray-200 bg-transparent"
+                  className="w-[20rem] md:w-[30rem] px-2 py-3 grow outline-none border-gray-200 bg-transparent"
                 />
               </div>
               <button
