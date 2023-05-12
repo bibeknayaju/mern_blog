@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigate, useParams } from "react-router-dom";
 import Editor from "../Components/Editor";
-import PhotoUploader from "../Components/PhotoUploader";
 
 function EditBlog() {
   const [title, setTitle] = useState("");

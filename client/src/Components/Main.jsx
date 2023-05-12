@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 
 function Main({ blogs }) {
   return (
-    <div className="grid sm:grid-cols-1  md:grid-cols-3 lg:grid-cols-3 p-4 md:p-0 lg:p-0 gap-5 mb-9 max-w-6xl m-auto mt-7 text-white">
+    <div className="grid sm:grid-cols-1  md:grid-cols-3 lg:grid-cols-3 p-4 md:p-2 lg:p-2 gap-5 mb-9 max-w-6xl m-auto mt-7 text-white">
       {/* Left Div */}
       <div className="col-span-2">
         <Link to={"/blog/" + blogs[0]?._id}>
           <img
-            className="w-full rounded-md"
+            className=" rounded-2xl object-contain h-80 md:h-fit lg:h-fit"
             src={"http://localhost:4000/uploads/" + blogs[0]?.photos?.[0]}
             alt={blogs[0]?.title}
           />
@@ -17,7 +17,9 @@ function Main({ blogs }) {
           <h2 className="text-xl font-bold mt-2">{blogs[0]?.title}</h2>
         </Link>
         <Link to={"/blog/" + blogs[0]?._id}>
-          <p className="text-gray-400 mt-1 truncate">{blogs[0]?.summary}</p>
+          <p className="text-gray-400 max-w-md mt-1 truncate">
+            {blogs[0]?.summary}
+          </p>
         </Link>
 
         <div className="flex items-center mt-2 truncate">
@@ -48,7 +50,7 @@ function Main({ blogs }) {
         <div className="col-span-1">
           <Link to={"/blog/" + blogs[1]?._id}>
             <img
-              className="w-full rounded-md"
+              className=" object-contain  h-80 md:h-fit lg:h-fit"
               src={"http://localhost:4000/uploads/" + blogs[1]?.photos?.[0]}
               alt={blogs[1]?.title}
             />
@@ -85,15 +87,15 @@ function Main({ blogs }) {
 
         {/* Right Div 2 */}
         <div className="col-span-1">
-          <Link to={"/blog/" + blogs[1]?._id}>
+          <Link to={"/blog/" + blogs[2]?._id}>
             <img
-              className="w-full rounded-md"
+              className=" rounded-2xl object-contain sm:h-80 aspect-video md:h-fit lg:h-fit"
               src={"http://localhost:4000/uploads/" + blogs[2]?.photos?.[0]}
               alt={blogs[2]?.title}
             />
           </Link>
           <Link to={"/blog/" + blogs[1]?._id}>
-            <h2 className="text-xl font-bold mt-2 truncate">
+            <h2 className="text-xl max-w-md md:max-w-none lg:max-w-none font-bold mt-2 truncate">
               {blogs[2]?.title}
             </h2>
           </Link>

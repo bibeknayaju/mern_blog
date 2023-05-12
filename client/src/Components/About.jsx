@@ -5,7 +5,7 @@ function About() {
     <div className="mb-10 border-b bg-black py-8 border-gray-500 h-fit">
       <img
         className="h-32 rounded-full max-w-5xl m-auto mb-3"
-        src="http://localhost:4000/userphotos/3a4cc344e30c9707f166e042bb0aa6b2.jpeg"
+        src="https://scontent.fktm19-1.fna.fbcdn.net/v/t39.30808-6/333206470_2626021304207352_4445035252622896070_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=fQ519nYFqqcAX_UGBCc&_nc_ht=scontent.fktm19-1.fna&oh=00_AfA2th70dLurfmGVnyKMIRRz94mMDIrWyORGPxRROZY7Ew&oe=64612E70"
         alt="bibek"
       />
 

@@ -11,6 +11,7 @@ function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userPhoto, setUserPhoto] = useState([]);
   const [redirect, setRedirect] = useState(false);
+  const [bio, setBio] = useState("");
 
   async function uploadPhoto(e) {
     const files = e.target.files;
@@ -43,6 +44,7 @@ function RegisterPage() {
             email,
             password,
             userPhoto,
+            bio,
           });
         }
         setRedirect(true);
@@ -50,6 +52,7 @@ function RegisterPage() {
         setEmail("");
         setPassword("");
         setUserPhoto([]);
+        setBio("");
       } else {
         return alert("Password does not match");
       }

@@ -6,7 +6,7 @@ import { UserContext } from "../UserContext";
 function NavBar() {
   const { user } = useContext(UserContext);
   return (
-    <div className="sticky px-5 md:p-0 lg:p-0 top-0 border-b pb-4 border-gray-300 ">
+    <div className="sticky px-5 md:p-0 lg:p-0 top-0 border-b items-center pb-4 border-gray-300 ">
       <div className="text-white max-w-6xl m-auto flex justify-between items-center pt-10">
         <Link className="flex items-center gap-1" to="/">
           <svg
@@ -25,7 +25,7 @@ function NavBar() {
 
           <span className="font-bold text-white text-xl">My Blog</span>
         </Link>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 mb-3 items-center">
           {!!user && (
             <Link to={"/account/blog/new"} className="flex gap-2">
               {" "}
@@ -110,7 +110,7 @@ function NavBar() {
               </div>
             )}
 
-            {!!user && <div>{user.name}</div>}
+            {!!user && <div className="hidden md:block">{user.name}</div>}
           </Link>
         </div>
       </div>

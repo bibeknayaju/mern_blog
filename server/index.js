@@ -11,6 +11,7 @@ const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs/dist/bcrypt");
 const app = express();
 const multer = require("multer");
+const validator = require("validator");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const storage = multer.diskStorage({
@@ -48,13 +49,14 @@ mongoose.connect(process.env.MONGO_URL);
 
 app.post("/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { email, name, password, userPhoto } = req.body;
+  const { email, name, password, userPhoto, bio } = req.body;
   try {
     const userDoc = await User.create({
       name,
       email,
       password: bcryptjs.hashSync(password, bcryptSalt),
       photos: userPhoto,
+      bio,
     });
     res.json(userDoc);
   } catch (e) {
@@ -64,31 +66,38 @@ app.post("/register", async (req, res) => {
 
 // for login purpose
 app.post("/login", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
-  if (userDoc) {
-    const passOk = bcrypt.compareSync(password, userDoc.password);
-    if (passOk) {
-      jwt.sign(
-        {
-          email: userDoc.email,
-          id: userDoc._id,
-          name: userDoc.name,
-        },
-        jwtSecret,
-        { expiresIn: "1h" }, // set session expiration of 1 hour
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json(userDoc);
-        }
-      );
-    } else {
-      res.status(422).json("Password doesn't match");
+  try {
+    await mongoose.connect(process.env.MONGO_URL);
+
+    const { email, password } = req.body;
+
+    if (!email) {
+      return res.status(422).json("Email not available");
     }
-  } else {
-    res.json(null);
+
+    const userDoc = await User.findOne({ email });
+
+    if (!userDoc) {
+      return res.status(404).json("User not found");
+    }
+
+    const passOk = bcrypt.compareSync(password, userDoc.password);
+    if (!passOk) {
+      return res.status(422).json("Password doesn't match");
+    }
+
+    jwt.sign(
+      { email: userDoc.email, id: userDoc._id, name: userDoc.name },
+      jwtSecret,
+      {},
+      (err, token) => {
+        if (err) throw err;
+        res.cookie("token", token).json(userDoc);
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Internal server error");
   }
 });
 
@@ -99,8 +108,10 @@ app.get("/profile", (req, res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const { email, name, _id, photos } = await User.findById(userData.id);
-      res.json({ email, name, _id, photos });
+      const { email, name, _id, photos, bio } = await User.findById(
+        userData.id
+      );
+      res.json({ email, name, _id, photos, bio });
     });
   } else {
     res.json(null);
@@ -125,6 +136,86 @@ app.post(
     res.json(uploadFiles);
   }
 );
+
+// for getting the account of specific user
+app.get("/account/:id", async (req, res) => {
+  const { id } = req.params;
+  const userDoc = await User.findById(id).populate();
+
+  if (userDoc) {
+    res.json(userDoc);
+  } else {
+    res.status(404).json({ error: "User not found" });
+  }
+});
+
+// for updating the user's information not password
+app.put("/account/edit/:id/", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email, bio, name } = req.body;
+    const { token } = req.cookies;
+
+    if (token) {
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          console.error(err);
+          return res.sendStatus(403);
+        }
+
+        const query = { _id: id };
+        const update = email ? { email, bio, name } : { bio, name };
+        const options = { new: true };
+
+        const updatedUser = await User.findOneAndUpdate(query, update, options);
+        res.status(200).send(updatedUser);
+      });
+    } else {
+      res.sendStatus(401);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// for user's changing the password
+app.put("/password/change/:id/", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+    const { token } = req.cookies;
+
+    if (token) {
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) {
+          console.error(err);
+          return res.sendStatus(403);
+        }
+
+        const user = await User.findById(id);
+        if (!user) {
+          return res.status(404).send("User not found");
+        }
+
+        // Check if old password matches login password
+        const passOk = bcrypt.compareSync(oldPassword, user.password);
+
+        if (!passOk) {
+          return res.status(401).send("Invalid password");
+        }
+
+        const hashedPassword = bcrypt.hashSync(newPassword, bcryptSalt);
+        user.password = hashedPassword;
+        await user.save();
+
+        res.sendStatus(200);
+      });
+    }
+  } catch (err) {
+    console.log("error hai ta guys", err);
+  }
+});
 
 // FOR UPLOADING THE IMAGE OF BLOG
 app.post("/upload", photoMiddleware.array("photos", 100), (req, res) => {
@@ -207,6 +298,26 @@ app.get("/blogs", async (req, res) => {
   );
 });
 
+// for getting the blog of specific user
+app.get("/account/blog/:id", (req, res) => {
+  const { token } = req.cookies;
+
+  if (token) {
+    try {
+      jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+        const blogData = await Blog.find({ owner: userData.id });
+        res.json(blogData);
+      });
+    } catch (err) {
+      throw err;
+    }
+  } else {
+    res.status(401).json({ message: "Missing token" });
+  }
+});
+
+// for getting the specific blog with id
 app.get("/blog/:id", async (req, res) => {
   const { id } = req.params;
   const blogDoc = await Blog.findById(id).populate("owner comment", [
@@ -255,9 +366,6 @@ app.put(
         return res.status(400).json("you are not the author");
       }
 
-      // const photos = newPath ? newPath : blogDoc?.photos;
-      // const splitPhoto = newPath?.split("/");
-      // const photos = splitPhoto[1];
       let photos = blogDoc?.photos;
 
       if (newPath) {

@@ -1,10 +1,12 @@
 import React from "react";
 import PhotoUploader from "../Components/PhotoUploader";
-import { useParams, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { Helmet } from "react-helmet";
 import Editor from "../Components/Editor";
+import ScrollToTopOnMount from "../Components/ScrollToTopOnMount";
+import slugify from "slugify";
 
 function CreateBlog() {
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -13,6 +15,7 @@ function CreateBlog() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [summary, setSummary] = useState("");
+  const [slugifiedTitle, setSlugifiedTitle] = useState("");
 
   // for creating the blog in the database
   async function saveBlogs(e) {
@@ -22,6 +25,7 @@ function CreateBlog() {
       description,
       addedPhotos,
       summary,
+      slugifiedTitle: slugify(title, { lower: true }),
     };
 
     await axios.post("/blogs", blogData);
@@ -49,11 +53,12 @@ function CreateBlog() {
     );
   }
   return (
-    <div className="text-white max-w-6xl m-auto">
+    <div className="text-white p-4 md:p-0 lg:p-0 max-w-6xl m-auto">
       <Helmet>
         <title>{"Create Blog"}</title>
         <meta name="description" content="My Page Description" />
       </Helmet>
+      <ScrollToTopOnMount />
       <form onSubmit={saveBlogs}>
         {preInput("Title", "Title of the Blog")}
         <input

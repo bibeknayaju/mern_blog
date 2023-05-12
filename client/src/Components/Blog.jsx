@@ -18,7 +18,9 @@ function Blog({ blogs }) {
       {blogs.length > 0 &&
         blogs.map((blog) => (
           <>
-            <div className="text-white flex flex-col cursor-auto pt-4 items-center gap-2">
+            <div
+              key={blog.id}
+              className="text-white flex flex-col cursor-auto pt-4 items-center gap-2">
               <Link to={"/blog/" + blog._id}>
                 {blog.photos?.[0] && (
                   <img
@@ -28,20 +30,15 @@ function Blog({ blogs }) {
                   />
                 )}
               </Link>
-              <div className="flex flex-col pl-0 ml-[-2.7rem]">
+              <div className="flex flex-col md:w-[20rem] lg: md:ml-[-2.7rem]">
                 <Link to={"/blog/" + blog._id}>
-                  <h2 className="font-bold text-gray-300 text-xl w-[20rem] truncate">
+                  <h2 className="font-bold text-gray-300 text-xl md:text-lg w-[20rem] truncate">
                     {blog.title}
                   </h2>
                 </Link>
-                {/* <h6
-                    className="text-sm mr-3 
-                  text-gray-500 truncate">
-                    {blog.summary}
-                  </h6> */}
 
                 <div className="m-0">
-                  <h3>{blog.owner.name}</h3>
+                  <h3>{blog?.owner?.name}</h3>
                 </div>
                 <div className="flex gap-2 ml-0">
                   <h3 className="text-gray-600 text-base">

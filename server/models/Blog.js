@@ -5,6 +5,7 @@ const BlogSchema = new mongoose.Schema(
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     title: String,
     description: String,
+    slugifiedTitle: String,
     summary: String,
     photos: [String],
     comment: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
