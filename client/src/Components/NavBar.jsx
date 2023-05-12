@@ -82,7 +82,7 @@ function NavBar() {
                       <img
                         className="h-12 rounded-full "
                         src={
-                          "https://w7.pngwing.com/pngs/223/244/png-transparent-computer-icons-avatar-user-profile-avatar-heroes-rectangle-black.png"
+                          "https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg"
                         }
                         alt={user.name}
                       />

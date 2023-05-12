@@ -11,7 +11,6 @@ function AccountPage() {
   const { user, setUser, ready } = useContext(UserContext);
   const [redirect, setRedirect] = useState("");
   const [blogs, setBlog] = useState([]);
-  console.log(blogs);
   const id = user?._id;
   const [loading, setLoading] = useState(true);
 
@@ -66,13 +65,25 @@ function AccountPage() {
       </div>
 
       <div className="flex max-w-6xl m-auto gap-6">
-        <div className=" rounded-full ">
-          <img
-            src={"http://localhost:4000/userphotos/" + user?.photos?.[0]}
-            alt={user?.email}
-            className="h-24 rounded-full"
-          />
-        </div>
+        {user?.photos.length > 0 ? (
+          <div className=" rounded-full ">
+            <img
+              src={"http://localhost:4000/userphotos/" + user?.photos?.[0]}
+              alt={user?.email}
+              className="h-24 rounded-full"
+            />
+          </div>
+        ) : (
+          <div className=" rounded-full ">
+            <img
+              src={
+                "https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg"
+              }
+              alt={user?.email}
+              className="h-24 rounded-full"
+            />
+          </div>
+        )}
 
         <div className="">
           <div className="flex flex-row items-center gap-2 justify-center mb-6 ">
@@ -106,23 +117,41 @@ function AccountPage() {
         </div>
       </div>
 
-      <div className="">
-        <hr />
+      {blogs.length > 0 ? (
+        <div className="">
+          <hr />
 
-        <div className="text-center my-5">
-          <h2 className="font-Montserrat text-xl font-medium ">My Blogs</h2>
+          <div className="text-center my-5">
+            <h2 className="font-Montserrat text-xl font-medium ">My Blogs</h2>
+          </div>
+          {loading ? (
+            <div className="text-center">
+              <h2 className="font-Montserrat text-2xl font-light">
+                Loading...
+              </h2>
+            </div>
+          ) : (
+            <div className="grid p-4 mg:p-0 lg:p-0 sm:grid-col-1 md:grid-cols-3 lg:grid-cols-3 gap-4 max-w-6xl m-auto">
+              {blogs.length > 0 &&
+                blogs.map((blog) => <AccountBlog blog={blog} />)}
+            </div>
+          )}
         </div>
-        {loading ? (
+      ) : (
+        <>
+          <div className="text-center my-5">
+            <h2 className="font-Montserrat text-xl font-medium ">My Blogs</h2>
+          </div>
           <div className="text-center">
-            <h2 className="font-Montserrat text-2xl font-light">Loading...</h2>
+            <h5 className="font-Montserrat text-xl font-light">
+              You don't have any blogs yet. Create Here your first blog.{" "}
+              <Link to={"/account/blog/new"} className="underline">
+                Create Blog
+              </Link>
+            </h5>
           </div>
-        ) : (
-          <div className="grid p-4 mg:p-0 lg:p-0 sm:grid-col-1 md:grid-cols-3 lg:grid-cols-3 gap-4 max-w-6xl m-auto">
-            {blogs.length > 0 &&
-              blogs.map((blog) => <AccountBlog blog={blog} />)}
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </nav>
   );
 }

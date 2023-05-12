@@ -28,13 +28,25 @@ function CommentForm({ onCommentCreated }) {
       <form onSubmit={saveComment}>
         {user ? (
           <div className="flex gap-3">
-            <div className="m-0 mt-2">
-              <img
-                src={"http://localhost:4000/userphotos/" + user?.photos?.[0]}
-                alt={user?.name}
-                className="h-12 rounded-full"
-              />{" "}
-            </div>
+            {user.length > 0 ? (
+              <div className="m-0 mt-2">
+                <img
+                  src={"http://localhost:4000/userphotos/" + user?.photos?.[0]}
+                  alt={user?.name}
+                  className="h-12 rounded-full"
+                />{" "}
+              </div>
+            ) : (
+              <div className="m-0 mt-2">
+                <img
+                  src={
+                    "https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg"
+                  }
+                  alt={user?.name}
+                  className="h-12 rounded-full"
+                />{" "}
+              </div>
+            )}
 
             <div>
               <div className="flex">
